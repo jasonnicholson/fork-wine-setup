@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export WINEPREFIX="${WINEPREFIX:-$HOME/.wine-fork}"
+export WINEDLLOVERRIDES="NaturalLanguage6=n"
+export WINEDEBUG=err+all,fixme-all
+
+FORK_EXE="$WINEPREFIX/drive_c/users/$USER/AppData/Local/Fork/current/Fork.exe"
+LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/fork"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/fork-$(date +%Y%m%d-%H%M%S).log"
+
+# Keep only the 10 most recent logs
+find "$LOG_DIR" -maxdepth 1 -name 'fork-*.log' -printf '%T@ %p\n' 2>/dev/null \
+  | sort -rn | tail -n +11 | cut -d' ' -f2- | xargs -r rm --
+
+set +e
+wine "$FORK_EXE" "$@" 2>"$LOG_FILE"
+EXIT_CODE=$?
+set -e
+
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo "Fork exited with code $EXIT_CODE — log: $LOG_FILE" >&2
+    echo "Last 20 lines:" >&2
+    tail -20 "$LOG_FILE" >&2
+fi
+
+exit "$EXIT_CODE"
