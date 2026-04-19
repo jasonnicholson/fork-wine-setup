@@ -14,6 +14,9 @@ LOG_FILE="$LOG_DIR/fork-$(date +%Y%m%d-%H%M%S).log"
 find "$LOG_DIR" -maxdepth 1 -name 'fork-*.log' -printf '%T@ %p\n' 2>/dev/null \
   | sort -rn | tail -n +11 | cut -d' ' -f2- | xargs -r rm --
 
+# Fork's biturbo.dll resolves License/Fork.exe relative to CWD
+cd "$(dirname "$FORK_EXE")"
+
 set +e
 wine "$FORK_EXE" "$@" 2>"$LOG_FILE"
 EXIT_CODE=$?
