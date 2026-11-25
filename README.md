@@ -1,3 +1,8 @@
+# Do not use this
+
+
+This was an interesting experiment but was a bad idea overall. Just use [sourcegit](https://github.com/sourcegit-org/sourcegit). It is close enough to Fork that you will know how to use it.
+
 # fork-wine-setup
 
 Scripts to run [Fork](https://git-fork.com) 2.16.1 on Linux under Wine.
